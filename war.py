@@ -27,8 +27,6 @@ def deck():
 
 # List of playing cards
 cards = deck()
-# for card in cards:
-#     print(card.suit, card.value)
 
 # Randomized equal split of playing cards between two players
 def split_deck():
@@ -41,16 +39,10 @@ def split_deck():
 
 # Player's playing card set
 player1_set, player2_set = split_deck()
-# if(set(player1_set) & set(player2_set)):
-#     print("Common")
-# else:
-#     print("Not common")
 
 # Game play in accordance with defined rules
 def play(set1=player1_set, set2=player2_set):
     winner = -1
-    player1_skip = []
-    player2_skip = []
     # Drawing cards, play is from last card to first card through pop
     try:
             player1_card = set1.pop(0)
@@ -63,73 +55,46 @@ def play(set1=player1_set, set2=player2_set):
     
     player1_value = player1_card.value if player1_card.value not in face_values_reverse else face_values_reverse[player1_card.value]
     player2_value = player2_card.value if player2_card.value not in face_values_reverse else face_values_reverse[player2_card.value]
-    #print(f"Player1: {player1_card.suit} {player1_card.value}")
-    #print(f"Player2: {player2_card.suit} {player2_card.value}")
     
     if player1_value > player2_value:
-        #print('Adding to player1')
-        set1.append(player1_card)
-        set1.append(player2_card)
         winner = 1
+        set1.append(player1_card); set1.append(player2_card)
     elif player2_value > player1_value:
-        #print("Adding to player2")
-        set2.append(player2_card)
-        set2.append(player1_card)
         winner = 2
+        set2.append(player2_card); set2.append(player1_card)
     elif player1_value == player2_value:
-        #print("Equal value")
-        player1_skip.append(player1_card) 
         try:
-            player1_skip.append(set1.pop(0))
+            player1_skip = set1.pop(0)
         except IndexError:
             sys.exit("Player 1 Loses! Player 2 Wins")
-        #print('Len set1, skip', len(set1), len(player1_skip))        
-
-        player2_skip.append(player2_card) 
         try:
-            player2_skip.append(set2.pop(0))
+            player2_skip = set2.pop(0)
         except IndexError:
             sys.exit("Player 1 Wins! Player 2 Loses")
-        #print('Len set2, skip', len(set2), len(player2_skip))      
         
         # Recursive function call
         set1, set2, winner = play(set1, set2)
         if winner == 1:
-            for card in player1_skip:
-                set1.append(card)
-            for card in player2_skip:
-                set1.append(card)
+            set1.append(player1_card); set1.append(player2_card)
+            set1.append(player1_skip); set1.append(player2_skip)
         elif winner == 2:
-            for card in player1_skip:
-                set2.append(card)
-            for card in player2_skip:
-                set2.append(card)
+            set2.append(player2_card); set2.append(player1_card)
+            set2.append(player2_skip); set2.append(player1_skip)
         elif winner == -1:
             print("weird")
 
-    # l1 = []
-    # for card1 in set1:
-    #     l1.append(card1.value)
-    #print(' '.join(map(str, l1))) 
-    # l1 = []
-    # for card2 in set2:
-    #     l1.append(card2.value)
-    #print(' '.join(map(str, l1)))
     return set1, set2, winner
 
 if __name__ == "__main__":
     set1, set2, winner = play()
     counter = 0
     while set1 and set2:
-    #while counter<1:
         counter += 1
         set1, set2, winner = play(set1, set2)
-        #print(counter)
-        #print("winner = ", winner)
-        #print(len(set1), len(set2))
         if len(set1) == 0:
             print("Player 1 Loses! Player 2 Wins")
             break
         if len(set2) == 0:
             print("Player 1 Wins! Player 2 Loses")
             break
+    print("Iterations, ", counter)
