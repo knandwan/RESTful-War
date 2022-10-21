@@ -17,6 +17,9 @@ class Card:
     def __init__(self, value, suit):
         self.value = value
         self.suit = suit
+    
+    def __str__(self):
+        return "{0}, {1}".format(self.value, self.suit)
 
 # Deck of cards
 def deck():
@@ -46,11 +49,11 @@ def play(set1, set2):
     try:
         player1_card = set1.pop(0)
     except:
-        return [], set2, 2
+       return [], set2, 2
     try:
         player2_card = set2.pop(0)
     except:
-        return set1, [], 1
+       return set1, [], 1
     
     player1_value = player1_card.value if player1_card.value not in face_values_reverse else face_values_reverse[player1_card.value]
     player2_value = player2_card.value if player2_card.value not in face_values_reverse else face_values_reverse[player2_card.value]
@@ -105,16 +108,17 @@ class StartGame(Resource):
         while set1 and set2:
             counter += 1
             set1, set2, winner = play(set1, set2)
-            if winner == 1:
-                cursor = cursor.execute(""" UPDATE playerwins SET wins = wins + 1 WHERE player = "Player1" """)
-                conn.commit()
-                return {"winner:": "Player 1"}
-            elif winner == 2:
-                cursor = cursor.execute(""" UPDATE playerwins SET wins = wins + 1 WHERE player = "Player2" """)
-                conn.commit()
-                return {"winner:": "Player 2"}
-            else:
-                return {"error:": "Error error error"}
+        
+        if winner == 1:
+            cursor = cursor.execute(""" UPDATE playerwins SET wins = wins + 1 WHERE player = "Player1" """)
+            conn.commit()
+            return {"winner:": "Player 1"}
+        elif winner == 2:
+            cursor = cursor.execute(""" UPDATE playerwins SET wins = wins + 1 WHERE player = "Player2" """)
+            conn.commit()
+            return {"winner:": "Player 2"}
+        else:
+            return {"error:": "Error error error"}
 
 
 class PlayerWins(Resource):
