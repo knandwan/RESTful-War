@@ -1,4 +1,5 @@
 import random, sqlite3
+from re import I
 
 from flask import Flask
 from flask_restful import Api, Resource
@@ -14,7 +15,7 @@ face_values_reverse = {"A":14, "K":13, "Q":12, "J":11}
 
 # Card, consisting of a value and suit
 class Card:
-    def __init__(self, value, suit):
+    def __init__(self, value: int, suit: str):
         self.value = value
         self.suit = suit
     
@@ -40,24 +41,35 @@ def split_deck(cards):
     # Randomized/shuffled selection from intermediary list
     set2 = random.sample(intset, 26)
     return set1, set2
-
-
+i = 0
 # Game play in accordance with defined rules
 def play(set1, set2):
+    global i
+    i += 1
     winner = -1
-    # Drawing cards, play is from last card to first card through pop
+    p1_empty = False
+    p2_empty = False
+    # Drawing cards, play is from first card to last card through pop
     try:
         player1_card = set1.pop(0)
     except:
-       return [], set2, 2
+       p1_empty = True 
+       #return [], set2, 2
     try:
         player2_card = set2.pop(0)
     except:
-       return set1, [], 1
+       p2_empty = True
+       #return set1, [], 1
     
+    if p1_empty and p2_empty:
+        return [], [], -1
+    elif p1_empty:
+        return [], set2, 2
+    elif p2_empty:
+        return set1, [], 1
+
     player1_value = player1_card.value if player1_card.value not in face_values_reverse else face_values_reverse[player1_card.value]
     player2_value = player2_card.value if player2_card.value not in face_values_reverse else face_values_reverse[player2_card.value]
-    
     if player1_value > player2_value:
         winner = 1
         set1.append(player1_card); set1.append(player2_card)
@@ -82,8 +94,6 @@ def play(set1, set2):
         elif winner == 2:
             set2.append(player2_card); set2.append(player1_card)
             set2.append(player2_skip); set2.append(player1_skip)
-        elif winner == -1:
-            print("weird")
 
     return set1, set2, winner
             
