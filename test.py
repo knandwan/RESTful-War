@@ -98,7 +98,7 @@ def testPlayer1Winner():
         print("Testcase failed")
 
 # Test 3: Edge case logic test
-## Hardcoding deck1 and deck2 with the exact same set of cards, same values in same order
+## Hardcoding deck1 and deck2 with the exact same set of cards, having the same values in same order
 def testAlwaysWar():
     player1set, player2set = list(), list()
 
