@@ -1,4 +1,7 @@
+import requests
 from warREST import play, Card
+
+BASE = "http://127.0.0.1:5000/"
 
 card_values_lower = list(range(2,8))
 card_values_higher = list(range(9,15))
@@ -73,3 +76,8 @@ print("Test1")
 test1()
 print("Test2")
 test2()
+
+
+def test3():
+    response = requests.get(BASE + "startgame")
+    print(response.json())
